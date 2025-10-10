@@ -1,0 +1,20 @@
+{
+    "players": [
+        {
+            "name": "Aiden",
+            "teams": ["FLA", "TBL", "TOR", "LAK", "UTA", "CGY", "CBJ", "CHI"]
+        },
+        {
+            "name": "Nico",
+            "teams": ["WPG","CAR","OTT","MIN","VAN","BOS","NYI","SEA"]
+        },
+        {
+            "name": "Peter",
+            "teams": ["VGK","COL","WSH","NYR","NSH","DET","PIT","SJS"]
+        },
+        {
+            "name": "Zayden",
+            "teams": ["EDM","DAL","NJD","MTL","STL","ANA","PHI","BUF"]
+        }
+    ]
+}

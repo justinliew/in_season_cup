@@ -1,0 +1,18 @@
+# This file describes a Fastly Compute package. To learn more visit:
+# https://www.fastly.com/documentation/reference/compute/fastly-toml
+
+authors = ["justinliew@gmail.com"]
+cloned_from = "https://github.com/fastly/compute-starter-kit-rust-default"
+description = "In Season Cup Backend"
+language = "rust"
+manifest_version = 3
+name = "in_season_cup_backend"
+service_id = "rVc3nOwUqupuGXXQgmgGEa"
+
+[local_server]
+  [local_server.backends]
+    [local_server.backends.nhl_api]
+      url = "https://api-web.nhle.com/"
+
+[scripts]
+  build = "cargo build --profile release"

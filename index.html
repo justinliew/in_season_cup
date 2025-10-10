@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>In-Season Cup Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .current-holder {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #4facfe 100%);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            color: white;
+        }
+
+        .current-holder h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .current-holder .team {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 10px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .next-game {
+            background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            color: white;
+        }
+
+        .next-game h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .game-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .game-detail {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .game-detail-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .game-detail-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .vs-matchup {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 15px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .no-game {
+            font-style: italic;
+            opacity: 0.8;
+            font-size: 1.1rem;
+        }
+
+        .leaderboard {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .leaderboard h3 {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            color: #333;
+            text-align: center;
+        }
+
+        .player-row {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            margin-bottom: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .player-row:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .player-rank {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-right: 20px;
+            min-width: 40px;
+        }
+
+        .player-info {
+            flex-grow: 1;
+        }
+
+        .player-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .player-teams {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .team-tag {
+            background: #667eea;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .team-tag.has-cup {
+            background: #f5576c;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .player-stats {
+            text-align: right;
+        }
+
+        .cup-days {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #f5576c;
+        }
+
+        .cup-days-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .error {
+            background: #f56565;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .last-updated {
+            text-align: center;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .player-row {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .player-stats {
+                text-align: center;
+                margin-top: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🏆 In-Season Cup Tracker</h1>
+            <p>Track which teams are dominating the in-season cup competition</p>
+        </header>
+
+
+
+        <div id="loading" class="loading" style="display: none;">
+            Loading cup data...
+        </div>
+
+        <div id="error" class="error" style="display: none;"></div>
+
+        <div id="currentHolder" class="current-holder" style="display: none;">
+            <h2>Current Cup Holder</h2>
+            <div class="team" id="currentTeam"></div>
+            <div id="currentPlayer"></div>
+        </div>
+
+        <div id="nextGame" class="next-game" style="display: none;">
+            <h3>Next Cup Holder Game</h3>
+            <div id="nextGameContent"></div>
+        </div>
+
+        <div id="leaderboard" class="leaderboard" style="display: none;">
+            <h3>Player Leaderboard</h3>
+            <div id="playerList"></div>
+        </div>
+
+        <div class="last-updated" id="lastUpdated"></div>
+    </div>
+
+    <script>
+        // Configuration - update these URLs to match your Fastly service
+        const API_BASE_URL = "https://in-season-cup.edgecompute.app"; // Assumes same domain
+
+        let playersData = [];
+        let cupHistory = {};
+        let currentOwner = '';
+
+        async function fetchData(endpoint) {
+            try {
+                const response = await fetch(`${API_BASE_URL}${endpoint}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error(`Error fetching ${endpoint}:`, error);
+                throw error;
+            }
+        }
+
+        async function fetchNextGame() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/next-game`);
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        return null; // No upcoming game found
+                    }
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Error fetching next game:', error);
+                return null;
+            }
+        }
+
+        async function loadData() {
+            showLoading();
+            hideError();
+            
+            try {
+                // Fetch all data in parallel
+                const [players, history] = await Promise.all([
+                    fetchData('/players'),
+                    fetchData('/cup-history')
+                ]);
+
+                playersData = players.players;
+                cupHistory = history;
+                
+                // Get current owner from cup history (team with most recent cup day)
+                findCurrentOwner();
+                
+                // Display the data
+                displayCurrentHolder();
+                displayLeaderboard();
+                
+                // Fetch and display next game (non-blocking)
+                displayNextGame();
+                
+                hideLoading();
+                updateLastUpdated();
+                
+            } catch (error) {
+                hideLoading();
+                showError('Failed to load cup data. Please check your connection and try again.');
+            }
+        }
+
+        function findCurrentOwner() {
+            let mostRecentDate = '';
+            let mostRecentTeam = '';
+            
+            cupHistory.teams.forEach(team => {
+                if (team.cup_days.length > 0) {
+                    const lastDate = team.cup_days[team.cup_days.length - 1];
+                    if (lastDate > mostRecentDate) {
+                        mostRecentDate = lastDate;
+                        mostRecentTeam = team.team;
+                    }
+                }
+            });
+            
+            currentOwner = mostRecentTeam;
+        }
+
+        function displayCurrentHolder() {
+            const currentHolderDiv = document.getElementById('currentHolder');
+            const currentTeamDiv = document.getElementById('currentTeam');
+            const currentPlayerDiv = document.getElementById('currentPlayer');
+            
+            if (currentOwner) {
+                const player = findPlayerByTeam(currentOwner);
+                currentTeamDiv.textContent = currentOwner;
+                currentPlayerDiv.textContent = player ? `${player.name}'s team` : 'Unknown player';
+                currentHolderDiv.style.display = 'block';
+            } else {
+                currentHolderDiv.style.display = 'none';
+            }
+        }
+
+        async function displayNextGame() {
+            const nextGameDiv = document.getElementById('nextGame');
+            const nextGameContentDiv = document.getElementById('nextGameContent');
+            
+            try {
+                const nextGame = await fetchNextGame();
+                
+                if (nextGame) {
+                    // Format the date in PST to match backend calculations
+                    const dateParts = nextGame.date.split('-');
+                    const gameDate = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]));
+                    const formattedDate = gameDate.toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        timeZone: 'America/Los_Angeles'
+                    });
+                    
+                    // Format the time in PST to match backend calculations
+                    let gameTime = 'TBD';
+                    if (nextGame.time !== 'TBD' && nextGame.time) {
+                        try {
+                            const timeDate = new Date(nextGame.time);
+                            gameTime = timeDate.toLocaleTimeString('en-US', {
+                                hour: 'numeric',
+                                minute: '2-digit',
+                                timeZone: 'America/Los_Angeles',
+                                timeZoneName: 'short'
+                            });
+                        } catch (e) {
+                            gameTime = nextGame.time;
+                        }
+                    }
+                    
+                    // Create matchup display
+                    const matchup = nextGame.is_home 
+                        ? `${currentOwner} vs ${nextGame.opponent}` 
+                        : `${nextGame.opponent} @ ${currentOwner}`;
+                    
+                    nextGameContentDiv.innerHTML = `
+                        <div class="vs-matchup">${matchup}</div>
+                        <div class="game-details">
+                            <div class="game-detail">
+                                <div class="game-detail-label">Date</div>
+                                <div class="game-detail-value">${formattedDate}</div>
+                            </div>
+                            <div class="game-detail">
+                                <div class="game-detail-label">Time</div>
+                                <div class="game-detail-value">${gameTime}</div>
+                            </div>
+                            <div class="game-detail">
+                                <div class="game-detail-label">Venue</div>
+                                <div class="game-detail-value">${nextGame.venue}</div>
+                            </div>
+                            <div class="game-detail">
+                                <div class="game-detail-label">Location</div>
+                                <div class="game-detail-value">${nextGame.is_home ? 'Home' : 'Away'}</div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    nextGameDiv.style.display = 'block';
+                } else {
+                    nextGameContentDiv.innerHTML = `
+                        <div class="no-game">No upcoming games found in the next 30 days</div>
+                    `;
+                    nextGameDiv.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error displaying next game:', error);
+                nextGameDiv.style.display = 'none';
+            }
+        }
+
+        function findPlayerByTeam(teamAbbrev) {
+            return playersData.find(player => 
+                player.teams.includes(teamAbbrev)
+            );
+        }
+
+        function calculatePlayerStats(player) {
+            let totalCupDays = 0;
+            let teamsWithCup = [];
+            
+            player.teams.forEach(team => {
+                const teamHistory = cupHistory.teams.find(t => t.team === team);
+                if (teamHistory) {
+                    totalCupDays += teamHistory.cup_days.length;
+                    if (teamHistory.cup_days.length > 0) {
+                        teamsWithCup.push(team);
+                    }
+                }
+            });
+            
+            return {
+                totalCupDays,
+                teamsWithCup,
+                hasCurrentCup: player.teams.includes(currentOwner)
+            };
+        }
+
+        function displayLeaderboard() {
+            const leaderboardDiv = document.getElementById('leaderboard');
+            const playerListDiv = document.getElementById('playerList');
+            
+            // Calculate stats and sort players
+            const playerStats = playersData.map(player => ({
+                ...player,
+                ...calculatePlayerStats(player)
+            })).sort((a, b) => b.totalCupDays - a.totalCupDays);
+            
+            // Generate HTML for each player
+            const playersHTML = playerStats.map((player, index) => `
+                <div class="player-row">
+                    <div class="player-rank">#${index + 1}</div>
+                    <div class="player-info">
+                        <div class="player-name">${player.name}</div>
+                        <div class="player-teams">
+                            ${player.teams.map(team => `
+                                <span class="team-tag ${team === currentOwner ? 'has-cup' : ''}">${team}</span>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div class="player-stats">
+                        <div class="cup-days">${player.totalCupDays}</div>
+                        <div class="cup-days-label">cup days</div>
+                    </div>
+                </div>
+            `).join('');
+            
+            playerListDiv.innerHTML = playersHTML;
+            leaderboardDiv.style.display = 'block';
+        }
+
+        async function updateCup() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/update`, {
+                    method: 'POST'
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                console.log('Update result:', result);
+                
+            } catch (error) {
+                console.error('Failed to update cup data:', error);
+                throw error; // Re-throw to be handled by caller
+            }
+        }
+
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function hideError() {
+            document.getElementById('error').style.display = 'none';
+        }
+
+        function updateLastUpdated() {
+            const lastUpdatedDiv = document.getElementById('lastUpdated');
+            const now = new Date();
+            const pstTime = now.toLocaleString('en-US', {
+                timeZone: 'America/Los_Angeles',
+                timeZoneName: 'short'
+            });
+            lastUpdatedDiv.textContent = `Last updated: ${pstTime}`;
+        }
+
+        async function initializePage() {
+            showLoading();
+            try {
+                // First update the cup data to ensure we have the latest information
+                await updateCup();
+                // Then load and display the data
+                await loadData();
+            } catch (error) {
+                hideLoading();
+                showError('Failed to initialize page. Please refresh and try again.');
+            }
+        }
+
+        // Initialize page when it loads
+        window.addEventListener('load', initializePage);
+        
+        // Auto-refresh every 30 minutes (reduced frequency since we update on load)
+        setInterval(loadData, 30 * 60 * 1000);
+    </script>
+</body>
+</html>
