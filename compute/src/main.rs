@@ -272,7 +272,7 @@ fn find_next_game_for_cup_holder() -> Result<Option<NextGame>, Error> {
     let today = Utc::now().with_timezone(&pst).date_naive();
     
     // Search up to 30 days ahead for the next game
-    for days_ahead in 1..=30 {
+    for days_ahead in 0..=30 {
         let check_date = today + Duration::days(days_ahead);
         let date_str = check_date.format("%Y-%m-%d").to_string();
         
