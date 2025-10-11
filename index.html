@@ -428,10 +428,17 @@
                         }
                     }
                     
-                    // Create matchup display
+                    // Create matchup display with players
+                    const cupHolderDisplay = nextGame.cup_holder_player 
+                        ? `${currentOwner} (${nextGame.cup_holder_player})` 
+                        : currentOwner;
+                    const opponentDisplay = nextGame.opponent_player 
+                        ? `${nextGame.opponent} (${nextGame.opponent_player})` 
+                        : nextGame.opponent;
+                    
                     const matchup = nextGame.is_home 
-                        ? `${currentOwner} vs ${nextGame.opponent}` 
-                        : `${nextGame.opponent} @ ${currentOwner}`;
+                        ? `${cupHolderDisplay} vs ${opponentDisplay}` 
+                        : `${opponentDisplay} @ ${cupHolderDisplay}`;
                     
                     nextGameContentDiv.innerHTML = `
                         <div class="vs-matchup">${matchup}</div>

@@ -66,6 +66,8 @@ struct NextGame {
     opponent: String,          // Opponent team abbreviation
     is_home: bool,            // True if cup holder is home team
     venue: String,            // Venue name
+    cup_holder_player: Option<String>,  // Name of player who has the cup holder team
+    opponent_player: Option<String>,    // Name of player who has the opponent team
 }
 
 fn get_pst() -> FixedOffset {
@@ -263,6 +265,28 @@ fn get_players() -> Result<Response, Error> {
         .with_body_text_plain(players_json))
 }
 
+fn find_player_by_team(team_abbrev: &str) -> Result<Option<String>, Error> {
+    let players_json = include_str!("players.json");
+    let players_data: serde_json::Value = serde_json::from_str(players_json)
+        .map_err(|e| Error::msg(format!("Failed to parse players.json: {:?}", e)))?;
+    
+    if let Some(players) = players_data["players"].as_array() {
+        for player in players {
+            if let (Some(name), Some(teams)) = (player["name"].as_str(), player["teams"].as_array()) {
+                for team in teams {
+                    if let Some(team_str) = team.as_str() {
+                        if team_str == team_abbrev {
+                            return Ok(Some(name.to_string()));
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    Ok(None)
+}
+
 fn find_next_game_for_cup_holder() -> Result<Option<NextGame>, Error> {
     // Get current cup state to find who has the cup
     let cup_state = get_cup_state()?;
@@ -312,12 +336,18 @@ fn find_next_game_for_cup_holder() -> Result<Option<NextGame>, Error> {
                                     let start_time = game["startTimeUTC"].as_str().unwrap_or("TBD");
                                     let venue = game["venue"]["default"].as_str().unwrap_or("TBD");
                                     
+                                    // Find players for both teams
+                                    let cup_holder_player = find_player_by_team(&cup_holder).unwrap_or(None);
+                                    let opponent_player = find_player_by_team(&opponent).unwrap_or(None);
+                                    
                                     return Ok(Some(NextGame {
                                         date: date_str,
                                         time: start_time.to_string(),
                                         opponent,
                                         is_home,
                                         venue: venue.to_string(),
+                                        cup_holder_player,
+                                        opponent_player,
                                     }));
                                 }
                             }
