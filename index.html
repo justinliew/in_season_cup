@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -33,7 +34,7 @@
         .header h1 {
             font-size: 3rem;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .header p {
@@ -47,7 +48,7 @@
             padding: 30px;
             text-align: center;
             margin-bottom: 40px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             color: white;
         }
 
@@ -60,7 +61,7 @@
             font-size: 3rem;
             font-weight: bold;
             margin: 10px 0;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .next-game {
@@ -69,7 +70,7 @@
             padding: 25px;
             text-align: center;
             margin-bottom: 40px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             color: white;
         }
 
@@ -110,7 +111,7 @@
             font-size: 1.8rem;
             font-weight: bold;
             margin: 15px 0;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .no-game {
@@ -123,7 +124,7 @@
             background: white;
             border-radius: 15px;
             padding: 30px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
         }
 
@@ -147,7 +148,7 @@
 
         .player-row:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
         }
 
         .player-rank {
@@ -191,9 +192,17 @@
         }
 
         @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
 
         .player-stats {
@@ -231,7 +240,7 @@
 
         .last-updated {
             text-align: center;
-            color: rgba(255,255,255,0.8);
+            color: rgba(255, 255, 255, 0.8);
             font-size: 0.9rem;
             margin-top: 20px;
         }
@@ -240,16 +249,16 @@
             .container {
                 padding: 10px;
             }
-            
+
             .header h1 {
                 font-size: 2rem;
             }
-            
+
             .player-row {
                 flex-direction: column;
                 text-align: center;
             }
-            
+
             .player-stats {
                 text-align: center;
                 margin-top: 15px;
@@ -257,6 +266,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <header class="header">
@@ -292,12 +302,50 @@
     </div>
 
     <script>
+
         // Configuration - update these URLs to match your Fastly service
         const API_BASE_URL = "https://in-season-cup.edgecompute.app"; // Assumes same domain
 
         let playersData = [];
         let cupHistory = {};
         let currentOwner = '';
+
+        // Team colors lookup
+        const teamColors = {
+            "ANA": { "name": "Anaheim Ducks", "colors": { "primary": "#010101", "secondary": "#a2aaad", "accent": "#fc4c02" } },
+            "ARI": { "name": "Arizona Coyotes", "colors": { "primary": "#010101", "secondary": "#862633", "accent": "#ddcba4" } },
+            "BOS": { "name": "Boston Bruins", "colors": { "primary": "#010101", "secondary": "#ffb81c", "accent": "#ffb81c" } },
+            "BUF": { "name": "Buffalo Sabres", "colors": { "primary": "#041e42", "secondary": "#ffb81c", "accent": "#c8102e" } },
+            "CGY": { "name": "Calgary Flames", "colors": { "primary": "#c8102e", "secondary": "#f1be48", "accent": "#010101" } },
+            "CAR": { "name": "Carolina Hurricanes", "colors": { "primary": "#c8102e", "secondary": "#010101", "accent": "#a2aaad" } },
+            "CHI": { "name": "Chicago Blackhawks", "colors": { "primary": "#c8102e", "secondary": "#010101", "accent": "#ffd100" } },
+            "COL": { "name": "Colorado Avalanche", "colors": { "primary": "#6f263d", "secondary": "#236192", "accent": "#a4a9ad" } },
+            "CBJ": { "name": "Columbus Blue Jackets", "colors": { "primary": "#041e42", "secondary": "#c8102e", "accent": "#a4a9ad" } },
+            "DAL": { "name": "Dallas Stars", "colors": { "primary": "#006341", "secondary": "#010101", "accent": "#8a8d8f" } },
+            "DET": { "name": "Detroit Red Wings", "colors": { "primary": "#c8102e", "secondary": "#ffffff", "accent": "#000000" } },
+            "EDM": { "name": "Edmonton Oilers", "colors": { "primary": "#00205b", "secondary": "#cf4520", "accent": "#ffffff" } },
+            "FLA": { "name": "Florida Panthers", "colors": { "primary": "#041e42", "secondary": "#c8102e", "accent": "#b9975b" } },
+            "LAK": { "name": "Los Angeles Kings", "colors": { "primary": "#010101", "secondary": "#a2aaad", "accent": "#ffffff" } },
+            "MIN": { "name": "Minnesota Wild", "colors": { "primary": "#154734", "secondary": "#a6192e", "accent": "#eaaa00" } },
+            "MTL": { "name": "Montreal Canadiens", "colors": { "primary": "#a6192e", "secondary": "#001e62", "accent": "#ffffff" } },
+            "NSH": { "name": "Nashville Predators", "colors": { "primary": "#ffb81c", "secondary": "#041e42", "accent": "#ffffff" } },
+            "NJD": { "name": "New Jersey Devils", "colors": { "primary": "#c8102e", "secondary": "#010101", "accent": "#ffffff" } },
+            "NYI": { "name": "New York Islanders", "colors": { "primary": "#003087", "secondary": "#fc4c02", "accent": "#ffffff" } },
+            "NYR": { "name": "New York Rangers", "colors": { "primary": "#0033a0", "secondary": "#c8102e", "accent": "#ffffff" } },
+            "OTT": { "name": "Ottawa Senators", "colors": { "primary": "#c8102e", "secondary": "#010101", "accent": "#c69214" } },
+            "PHI": { "name": "Philadelphia Flyers", "colors": { "primary": "#fa4616", "secondary": "#010101", "accent": "#ffffff" } },
+            "PIT": { "name": "Pittsburgh Penguins", "colors": { "primary": "#010101", "secondary": "#ffb81c", "accent": "#ffffff" } },
+            "SJS": { "name": "San Jose Sharks", "colors": { "primary": "#006272", "secondary": "#e57200", "accent": "#010101" } },
+            "STL": { "name": "St Louis Blues", "colors": { "primary": "#003087", "secondary": "#ffb81c", "accent": "#041e42" } },
+            "TBL": { "name": "Tampa Bay Lightning", "colors": { "primary": "#00205b", "secondary": "#ffffff", "accent": "#000000" } },
+            "TOR": { "name": "Toronto Maple Leafs", "colors": { "primary": "#00205b", "secondary": "#ffffff", "accent": "#000000" } },
+            "VAN": { "name": "Vancouver Canucks", "colors": { "primary": "#00205b", "secondary": "#041c2c", "accent": "#97999b" } },
+            "VGK": { "name": "Vegas Golden Knights", "colors": { "primary": "#b4975a", "secondary": "#333f42", "accent": "#010101" } },
+            "WSH": { "name": "Washington Capitals", "colors": { "primary": "#a6192e", "secondary": "#041e42", "accent": "#782f40" } },
+            "WPG": { "name": "Winnipeg Jets", "colors": { "primary": "#041e42", "secondary": "#c8102e", "accent": "#ffffff" } },
+            "UTA": { "name": "Utah Hockey Club", "colors": { "primary": "#010101", "secondary": "#862633", "accent": "#ddcba4" } },
+            "SEA": { "name": "Seattle Kraken", "colors": { "primary": "#001628", "secondary": "#99d9d9", "accent": "#355464" } }
+        };
 
         async function fetchData(endpoint) {
             try {
@@ -331,7 +379,7 @@
         async function loadData() {
             showLoading();
             hideError();
-            
+
             try {
                 // Fetch all data in parallel
                 const [players, history] = await Promise.all([
@@ -341,20 +389,20 @@
 
                 playersData = players.players;
                 cupHistory = history;
-                
+
                 // Get current owner from cup history (team with most recent cup day)
                 findCurrentOwner();
-                
+
                 // Display the data
                 displayCurrentHolder();
                 displayLeaderboard();
-                
+
                 // Fetch and display next game (non-blocking)
                 displayNextGame();
-                
+
                 hideLoading();
                 updateLastUpdated();
-                
+
             } catch (error) {
                 hideLoading();
                 showError('Failed to load cup data. Please check your connection and try again.');
@@ -364,7 +412,7 @@
         function findCurrentOwner() {
             let mostRecentDate = '';
             let mostRecentTeam = '';
-            
+
             cupHistory.teams.forEach(team => {
                 if (team.cup_days.length > 0) {
                     const lastDate = team.cup_days[team.cup_days.length - 1];
@@ -374,7 +422,7 @@
                     }
                 }
             });
-            
+
             currentOwner = mostRecentTeam;
         }
 
@@ -382,10 +430,30 @@
             const currentHolderDiv = document.getElementById('currentHolder');
             const currentTeamDiv = document.getElementById('currentTeam');
             const currentPlayerDiv = document.getElementById('currentPlayer');
-            
+
             if (currentOwner) {
                 const player = findPlayerByTeam(currentOwner);
-                currentTeamDiv.textContent = currentOwner;
+                const teamInfo = teamColors[currentOwner];
+                
+                if (teamInfo) {
+                    // Update team name to full name
+                    currentTeamDiv.textContent = teamInfo.name;
+                    
+                    // Create dynamic background with team colors
+                    const colors = teamInfo.colors;
+                    const gradient = `linear-gradient(135deg, ${colors.primary} 0%, ${colors.secondary} 50%, ${colors.accent} 100%)`;
+                    currentHolderDiv.style.background = gradient;
+                    
+                    // Adjust text color based on background brightness
+                    const textColor = getContrastColor(colors.primary);
+                    currentHolderDiv.style.color = textColor;
+                } else {
+                    // Fallback for unknown teams
+                    currentTeamDiv.textContent = currentOwner;
+                    currentHolderDiv.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #4facfe 100%)';
+                    currentHolderDiv.style.color = 'white';
+                }
+                
                 currentPlayerDiv.textContent = player ? `${player.name}'s team` : 'Unknown player';
                 currentHolderDiv.style.display = 'block';
             } else {
@@ -393,13 +461,29 @@
             }
         }
 
+        function getContrastColor(hexColor) {
+            // Remove # if present
+            const hex = hexColor.replace('#', '');
+            
+            // Convert to RGB
+            const r = parseInt(hex.substr(0, 2), 16);
+            const g = parseInt(hex.substr(2, 2), 16);
+            const b = parseInt(hex.substr(4, 2), 16);
+            
+            // Calculate relative luminance
+            const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+            
+            // Return white for dark backgrounds, dark for light backgrounds
+            return luminance > 0.5 ? '#000000' : '#ffffff';
+        }
+
         async function displayNextGame() {
             const nextGameDiv = document.getElementById('nextGame');
             const nextGameContentDiv = document.getElementById('nextGameContent');
-            
+
             try {
                 const nextGame = await fetchNextGame();
-                
+
                 if (nextGame) {
                     // Format the date in PST to match backend calculations
                     const dateParts = nextGame.date.split('-');
@@ -411,7 +495,7 @@
                         day: 'numeric',
                         timeZone: 'America/Los_Angeles'
                     });
-                    
+
                     // Format the time in PST to match backend calculations
                     let gameTime = 'TBD';
                     if (nextGame.time !== 'TBD' && nextGame.time) {
@@ -427,19 +511,19 @@
                             gameTime = nextGame.time;
                         }
                     }
-                    
+
                     // Create matchup display with players
-                    const cupHolderDisplay = nextGame.cup_holder_player 
-                        ? `${currentOwner} (${nextGame.cup_holder_player})` 
+                    const cupHolderDisplay = nextGame.cup_holder_player
+                        ? `${currentOwner} (${nextGame.cup_holder_player})`
                         : currentOwner;
-                    const opponentDisplay = nextGame.opponent_player 
-                        ? `${nextGame.opponent} (${nextGame.opponent_player})` 
+                    const opponentDisplay = nextGame.opponent_player
+                        ? `${nextGame.opponent} (${nextGame.opponent_player})`
                         : nextGame.opponent;
-                    
-                    const matchup = nextGame.is_home 
-                        ? `${cupHolderDisplay} vs ${opponentDisplay}` 
+
+                    const matchup = nextGame.is_home
+                        ? `${cupHolderDisplay} vs ${opponentDisplay}`
                         : `${opponentDisplay} @ ${cupHolderDisplay}`;
-                    
+
                     nextGameContentDiv.innerHTML = `
                         <div class="vs-matchup">${matchup}</div>
                         <div class="game-details">
@@ -461,7 +545,7 @@
                             </div>
                         </div>
                     `;
-                    
+
                     nextGameDiv.style.display = 'block';
                 } else {
                     nextGameContentDiv.innerHTML = `
@@ -476,7 +560,7 @@
         }
 
         function findPlayerByTeam(teamAbbrev) {
-            return playersData.find(player => 
+            return playersData.find(player =>
                 player.teams.includes(teamAbbrev)
             );
         }
@@ -484,7 +568,7 @@
         function calculatePlayerStats(player) {
             let totalCupDays = 0;
             let teamsWithCup = [];
-            
+
             player.teams.forEach(team => {
                 const teamHistory = cupHistory.teams.find(t => t.team === team);
                 if (teamHistory) {
@@ -494,7 +578,7 @@
                     }
                 }
             });
-            
+
             return {
                 totalCupDays,
                 teamsWithCup,
@@ -505,13 +589,13 @@
         function displayLeaderboard() {
             const leaderboardDiv = document.getElementById('leaderboard');
             const playerListDiv = document.getElementById('playerList');
-            
+
             // Calculate stats and sort players
             const playerStats = playersData.map(player => ({
                 ...player,
                 ...calculatePlayerStats(player)
             })).sort((a, b) => b.totalCupDays - a.totalCupDays);
-            
+
             // Generate HTML for each player
             const playersHTML = playerStats.map((player, index) => `
                 <div class="player-row">
@@ -519,9 +603,19 @@
                     <div class="player-info">
                         <div class="player-name">${player.name}</div>
                         <div class="player-teams">
-                            ${player.teams.map(team => `
-                                <span class="team-tag ${team === currentOwner ? 'has-cup' : ''}">${team}</span>
-                            `).join('')}
+                            ${player.teams.map(team => {
+                                const teamInfo = teamColors[team];
+                                const backgroundColor = teamInfo ? teamInfo.colors.primary : '#667eea';
+                                const textColor = teamInfo ? getContrastColor(teamInfo.colors.primary) : '#ffffff';
+                                const hasCurrentCup = team === currentOwner;
+                                
+                                return `
+                                    <span class="team-tag ${hasCurrentCup ? 'has-cup' : ''}" 
+                                          style="background-color: ${backgroundColor}; color: ${textColor};">
+                                        ${team}
+                                    </span>
+                                `;
+                            }).join('')}
                         </div>
                     </div>
                     <div class="player-stats">
@@ -530,7 +624,7 @@
                     </div>
                 </div>
             `).join('');
-            
+
             playerListDiv.innerHTML = playersHTML;
             leaderboardDiv.style.display = 'block';
         }
@@ -540,14 +634,14 @@
                 const response = await fetch(`${API_BASE_URL}/update`, {
                     method: 'POST'
                 });
-                
+
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                
+
                 const result = await response.json();
                 console.log('Update result:', result);
-                
+
             } catch (error) {
                 console.error('Failed to update cup data:', error);
                 throw error; // Re-throw to be handled by caller
@@ -597,9 +691,10 @@
 
         // Initialize page when it loads
         window.addEventListener('load', initializePage);
-        
+
         // Auto-refresh every 30 minutes (reduced frequency since we update on load)
         setInterval(loadData, 30 * 60 * 1000);
     </script>
 </body>
+
 </html>
