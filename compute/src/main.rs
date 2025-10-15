@@ -320,6 +320,7 @@ fn find_next_game_for_cup_holder() -> Result<Option<NextGame>, Error> {
                 // Look for games involving the cup holder
                 if let Some(game_week) = schedule_data["gameWeek"].as_array() {
                     for day in game_week {
+                        let date_str = day["date"].as_str().unwrap_or("");
                         if let Some(games) = day["games"].as_array() {
                             for game in games {
                                 let away_team = game["awayTeam"]["abbrev"].as_str().unwrap_or("");
@@ -341,7 +342,7 @@ fn find_next_game_for_cup_holder() -> Result<Option<NextGame>, Error> {
                                     let opponent_player = find_player_by_team(&opponent).unwrap_or(None);
                                     
                                     return Ok(Some(NextGame {
-                                        date: date_str,
+                                        date: date_str.to_string(),
                                         time: start_time.to_string(),
                                         opponent,
                                         is_home,
@@ -403,6 +404,17 @@ fn get_audit_log_endpoint() -> Result<Response, Error> {
         .with_content_type(mime::APPLICATION_JSON)
         .with_header("Access-Control-Allow-Origin", "*")
         .with_body_text_plain(&log_json))
+}
+
+fn get_cup_state_endpoint() -> Result<Response, Error> {
+    let cup_state = get_cup_state()?;
+    let state_json = serde_json::to_string(&cup_state)
+        .map_err(|e| Error::msg(format!("Failed to serialize cup state: {:?}", e)))?;
+
+    Ok(Response::from_status(StatusCode::OK)
+        .with_content_type(mime::APPLICATION_JSON)
+        .with_header("Access-Control-Allow-Origin", "*")
+        .with_body_text_plain(&state_json))
 }
 
 fn check_team_game_result(
@@ -494,10 +506,8 @@ fn update_in_season_cup() -> Result<Response, Error> {
             day_offset, day_date_str, current_owner
         );
 
-        // Add this day to the current owner's cup history
-        add_cup_day(&mut cup_history, &current_owner, &day_date_str);
-
         // Check if the current owner's team played and won their game that day
+        // We'll add the day to the appropriate team's history after we determine the outcome
         let (game_result, details, ending_owner) =
             match check_team_game_result(&current_owner, &day_date_str) {
                 Ok(Some((true, Some(opponent)))) => {
@@ -572,10 +582,15 @@ fn update_in_season_cup() -> Result<Response, Error> {
             ending_owner: ending_owner.clone(),
             details,
         };
+        
+        // Add this day to the team that ends up with the cup
+        add_cup_day(&mut cup_history, &ending_owner, &day_date_str);
+        
         add_audit_entry(&mut audit_log, audit_entry);
 
-        // Update current owner (will be the same until we implement transfers)
+        // Update current owner
         current_owner = ending_owner;
+        println!("  New cup owner: {}", current_owner);
 
         days_processed += 1;
     }
@@ -644,11 +659,16 @@ fn main(req: Request) -> Result<Response, Error> {
         // If request is to the `/players` path...
         "/players" => get_players(),
 
+        
+
         // If request is to the `/cup-history` path...
         "/cup-history" => get_cup_history_endpoint(),
 
         // If request is to the `/audit-log` path...
         "/audit-log" => get_audit_log_endpoint(),
+
+        // If request is to the `/state` path...
+        "/state" => get_cup_state_endpoint(),
 
         // If request is to the `/next-game` path...
         "/next-game" => get_next_game_endpoint(),
