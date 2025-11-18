@@ -8,7 +8,43 @@
     <style>
         * {
             margin: 0;
-            padding: 0;
+                 .last-updated {
+            text-align: center;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+
+        .nav-links {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .nav-links a {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 0 10px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .nav-links a.active {
+            background: white;
+            color: #667eea;
+        }
+
+        @media (max-width: 768px) {ng: 0;
             box-sizing: border-box;
         }
 
@@ -263,6 +299,11 @@
                 text-align: center;
                 margin-top: 15px;
             }
+
+            .nav-links a {
+                display: block;
+                margin: 10px 0;
+            }
         }
     </style>
 </head>
@@ -274,7 +315,10 @@
             <p>Track which teams are dominating the in-season cup competition</p>
         </header>
 
-
+        <div class="nav-links">
+            <a href="index.html" class="active">🏆 Leaderboard</a>
+            <a href="stats.html">📊 Statistics</a>
+        </div>
 
         <div id="loading" class="loading" style="display: none;">
             Loading cup data...
