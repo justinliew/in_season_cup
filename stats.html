@@ -327,19 +327,159 @@
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
+                width: 100%;
             }
             
             .header h1 {
                 font-size: 2rem;
             }
 
+            .header p {
+                font-size: 1rem;
+            }
+
             .stats-grid {
                 grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .stat-card {
+                padding: 20px;
+            }
+
+            .stat-card h3 {
+                font-size: 1.1rem;
+            }
+
+            .stat-value {
+                font-size: 2rem;
+            }
+
+            .nav-links {
+                margin-bottom: 20px;
             }
 
             .nav-links a {
                 display: block;
-                margin: 10px 0;
+                margin: 8px 0;
+                padding: 10px 20px;
+            }
+
+            .chart-section {
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+
+            .chart-section h2 {
+                font-size: 1.4rem;
+                margin-bottom: 15px;
+            }
+
+            .chart-container {
+                min-height: auto;
+            }
+
+            /* Bar chart mobile adjustments */
+            .bar-chart {
+                gap: 20px;
+                padding: 10px 0;
+            }
+
+            .bar-row {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                padding: 12px;
+                background: #f9f9f9;
+                border-radius: 8px;
+                margin-bottom: 12px;
+            }
+
+            .bar-label {
+                font-size: 1.05rem;
+                font-weight: 700;
+                margin-bottom: 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                color: #667eea;
+            }
+
+            .bar-label-total {
+                font-size: 1.3rem;
+                color: #667eea;
+                font-weight: 700;
+            }
+
+            .bar-wrapper {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                width: 100%;
+            }
+
+            .bar-container {
+                height: 35px;
+                margin-bottom: 0;
+                flex-shrink: 0;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+
+            .bar-segment {
+                font-size: 0.8rem;
+                font-weight: 600;
+            }
+
+            .bar-segment .tooltip {
+                display: none;
+            }
+
+            .bar-total {
+                display: none;
+            }
+
+            .chart-legend {
+                gap: 8px;
+                font-size: 0.85rem;
+            }
+
+            .legend-item {
+                flex: 0 0 calc(50% - 4px);
+            }
+
+            .legend-label {
+                font-size: 0.85rem;
+            }
+
+            .legend-color {
+                width: 16px;
+                height: 16px;
+            }
+
+            /* Line chart mobile adjustments */
+            .line-chart {
+                padding: 5px;
+            }
+
+            .line-chart-svg {
+                width: 100%;
+                height: auto;
+            }
+
+            .axis-label {
+                font-size: 8px;
+            }
+
+            .line-path {
+                stroke-width: 2;
+            }
+
+            .line-point {
+                r: 3;
+            }
+
+            .line-point:hover {
+                r: 4;
             }
         }
     </style>
@@ -493,6 +633,7 @@
 
         function displayPlayerTeamChart() {
             const chartContainer = document.getElementById('playerTeamChart');
+            const isMobile = window.innerWidth <= 768;
             
             // Calculate stats for each player
             const playerStats = playersData.map(player => {
@@ -532,32 +673,61 @@
             
             playerStats.forEach(player => {
                 const barWidthPercent = (player.total / maxTotal) * 100;
-                console.log(`${player.name}: ${player.total} days, ${barWidthPercent}% width`);
                 
-                chartHTML += `
-                    <div class="bar-row">
-                        <div class="bar-label">${player.name}</div>
-                        <div style="flex: 0 0 70%; display: flex; align-items: center; gap: 15px;">
-                            <div class="bar-container" style="width: ${barWidthPercent}%; max-width: 100%; flex: none; min-width: 50px;">
-                `;
-                
-                player.teams.forEach(teamData => {
-                    const segmentPercent = (teamData.days / player.total) * 100;
+                if (isMobile) {
+                    // Mobile layout: card-style with label and total on top, proportional bar below
                     chartHTML += `
-                        <div class="bar-segment" 
-                             style="width: ${segmentPercent}%; background-color: ${teamData.color};">
-                            ${teamData.days > 0 ? teamData.days : ''}
-                            <span class="tooltip">${teamData.team}: ${teamData.days} day${teamData.days !== 1 ? 's' : ''}</span>
+                        <div class="bar-row">
+                            <div class="bar-label">
+                                <span>${player.name}</span>
+                                <span class="bar-label-total">${player.total}</span>
+                            </div>
+                            <div class="bar-wrapper">
+                                <div class="bar-container" style="width: ${barWidthPercent}%; min-width: 60px; max-width: 100%;">
+                    `;
+                    
+                    player.teams.forEach(teamData => {
+                        const segmentPercent = (teamData.days / player.total) * 100;
+                        chartHTML += `
+                            <div class="bar-segment" 
+                                 style="width: ${segmentPercent}%; background-color: ${teamData.color};">
+                                ${teamData.days > 1 ? teamData.days : ''}
+                            </div>
+                        `;
+                    });
+                    
+                    chartHTML += `
+                                </div>
+                            </div>
                         </div>
                     `;
-                });
-                
-                chartHTML += `
+                } else {
+                    // Desktop layout: horizontal with proportional width
+                    chartHTML += `
+                        <div class="bar-row">
+                            <div class="bar-label">${player.name}</div>
+                            <div style="flex: 0 0 70%; display: flex; align-items: center; gap: 15px;">
+                                <div class="bar-container" style="width: ${barWidthPercent}%; max-width: 100%; flex: none; min-width: 50px;">
+                    `;
+                    
+                    player.teams.forEach(teamData => {
+                        const segmentPercent = (teamData.days / player.total) * 100;
+                        chartHTML += `
+                            <div class="bar-segment" 
+                                 style="width: ${segmentPercent}%; background-color: ${teamData.color};">
+                                ${teamData.days > 0 ? teamData.days : ''}
+                                <span class="tooltip">${teamData.team}: ${teamData.days} day${teamData.days !== 1 ? 's' : ''}</span>
                             </div>
-                            <div class="bar-total">${player.total}</div>
+                        `;
+                    });
+                    
+                    chartHTML += `
+                                </div>
+                                <div class="bar-total">${player.total}</div>
+                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                }
             });
             
             chartHTML += '</div>';
@@ -739,6 +909,18 @@
 
         // Initialize page when it loads
         window.addEventListener('load', loadAllData);
+        
+        // Redraw charts on window resize (for orientation changes)
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                if (playersData.length > 0) {
+                    displayPlayerTeamChart();
+                    displayTimelineChart();
+                }
+            }, 250);
+        });
         
         // Auto-refresh every 30 minutes
         setInterval(loadAllData, 30 * 60 * 1000);
