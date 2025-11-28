@@ -218,6 +218,10 @@
             font-size: 0.9rem;
             transition: all 0.3s ease;
             position: relative;
+            gap: 4px;
+            padding: 0 8px;
+            white-space: nowrap;
+            overflow: hidden;
         }
 
         .bar-segment:hover {
@@ -688,10 +692,12 @@
                     
                     player.teams.forEach(teamData => {
                         const segmentPercent = (teamData.days / player.total) * 100;
+                        const showLabel = segmentPercent > 15; // Only show team name if segment is wide enough
                         chartHTML += `
                             <div class="bar-segment" 
                                  style="width: ${segmentPercent}%; background-color: ${teamData.color};">
-                                ${teamData.days > 1 ? teamData.days : ''}
+                                ${showLabel ? `<span>${teamData.team}</span>` : ''}
+                                <span>${teamData.days}</span>
                             </div>
                         `;
                     });
@@ -712,10 +718,12 @@
                     
                     player.teams.forEach(teamData => {
                         const segmentPercent = (teamData.days / player.total) * 100;
+                        const showLabel = segmentPercent > 12; // Only show team name if segment is wide enough
                         chartHTML += `
                             <div class="bar-segment" 
                                  style="width: ${segmentPercent}%; background-color: ${teamData.color};">
-                                ${teamData.days > 0 ? teamData.days : ''}
+                                ${showLabel ? `<span>${teamData.team}</span>` : ''}
+                                <span>${teamData.days > 0 ? teamData.days : ''}</span>
                                 <span class="tooltip">${teamData.team}: ${teamData.days} day${teamData.days !== 1 ? 's' : ''}</span>
                             </div>
                         `;
