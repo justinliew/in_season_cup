@@ -501,10 +501,31 @@ fn update_in_season_cup() -> Result<Response, Error> {
         let day_date_str = day_date.format("%Y-%m-%d").to_string();
         let starting_owner = current_owner.clone();
 
+        // Check if this day is during the Olympic break (Feb 6-24, 2026 inclusive)
+        let is_olympic_break = day_date.year() == 2026 
+            && day_date.month() == 2 
+            && day_date.day() >= 6 
+            && day_date.day() <= 24;
+
         println!(
-            "Processing day {}: {} (owner: {})",
-            day_offset, day_date_str, current_owner
+            "Processing day {}: {} (owner: {}){}",
+            day_offset, day_date_str, current_owner,
+            if is_olympic_break { " [OLYMPIC BREAK]" } else { "" }
         );
+
+        // During Olympic break, just record in audit log but don't process games or add cup days
+        if is_olympic_break {
+            let audit_entry = AuditLogEntry {
+                date: day_date_str.clone(),
+                starting_owner: starting_owner.clone(),
+                game_result: "Olympic break - cup frozen".to_string(),
+                ending_owner: current_owner.clone(),
+                details: Some("No games during Olympic break (Feb 6-24, 2026)".to_string()),
+            };
+            add_audit_entry(&mut audit_log, audit_entry);
+            days_processed += 1;
+            continue; // Skip to next day without adding cup days or checking games
+        }
 
         // Check if the current owner's team played and won their game that day
         // We'll add the day to the appropriate team's history after we determine the outcome
