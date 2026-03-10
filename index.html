@@ -78,6 +78,49 @@
             opacity: 0.9;
         }
 
+        .countdown {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            display: inline-block;
+            font-size: 1.1rem;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+
+        .clinch-status {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            border-radius: 15px;
+            padding: 20px 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            color: white;
+        }
+
+        .clinch-status.clinched {
+            background: linear-gradient(135deg, #f5af19 0%, #f12711 100%);
+        }
+
+        .clinch-status h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .clinch-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .clinch-details {
+            font-size: 0.95rem;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+
         .current-holder {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #4facfe 100%);
             border-radius: 15px;
@@ -313,6 +356,7 @@
         <header class="header">
             <h1>🏆 In-Season Cup Tracker</h1>
             <p>Track which teams are dominating the in-season cup competition</p>
+            <div id="countdown" class="countdown"></div>
         </header>
 
         <div class="nav-links">
@@ -337,6 +381,11 @@
             <div id="nextGameContent"></div>
         </div>
 
+        <div id="clinchStatus" class="clinch-status" style="display: none;">
+            <h3>🏅 Race to the Cup</h3>
+            <div id="clinchContent"></div>
+        </div>
+
         <div id="leaderboard" class="leaderboard" style="display: none;">
             <h3>Player Leaderboard</h3>
             <div id="playerList"></div>
@@ -349,6 +398,31 @@
 
         // Configuration - update these URLs to match your Fastly service
         const API_BASE_URL = "https://in-season-cup.edgecompute.app"; // Assumes same domain
+
+        // Calculate days left in regular season
+        function getDaysLeftInSeason() {
+            const endOfSeason = new Date('2026-04-16T23:59:59');
+            const now = new Date();
+            const timeDiff = endOfSeason - now;
+            return Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+        }
+
+        // Calculate and display days until end of regular season
+        function updateCountdown() {
+            const daysLeft = getDaysLeftInSeason();
+            
+            const countdownDiv = document.getElementById('countdown');
+            if (daysLeft > 0) {
+                countdownDiv.textContent = `📅 ${daysLeft} day${daysLeft !== 1 ? 's' : ''} left in regular season`;
+            } else if (daysLeft === 0) {
+                countdownDiv.textContent = '📅 Last day of regular season!';
+            } else {
+                countdownDiv.textContent = '📅 Regular season has ended';
+            }
+        }
+
+        // Update countdown on page load
+        updateCountdown();
 
         let playersData = [];
         let cupHistory = {};
@@ -688,6 +762,51 @@
 
             playerListDiv.innerHTML = playersHTML;
             leaderboardDiv.style.display = 'block';
+
+            // Display clinch status based on the sorted player stats
+            displayClinchStatus(playerStats);
+        }
+
+        function displayClinchStatus(playerStats) {
+            const clinchDiv = document.getElementById('clinchStatus');
+            const clinchContent = document.getElementById('clinchContent');
+            const daysLeft = getDaysLeftInSeason();
+
+            if (playerStats.length < 2 || daysLeft <= 0) {
+                clinchDiv.style.display = 'none';
+                return;
+            }
+
+            const leader = playerStats[0];
+            const secondPlace = playerStats[1];
+            const leadMargin = leader.totalCupDays - secondPlace.totalCupDays;
+            
+            // Magic number: days left - lead margin + 1
+            // When magic number reaches 0 or below, leader has clinched
+            const magicNumber = daysLeft - leadMargin + 1;
+            
+            if (magicNumber <= 0) {
+                // Leader has clinched!
+                clinchDiv.classList.add('clinched');
+                clinchContent.innerHTML = `
+                    <div class="clinch-number">🎉 CLINCHED! 🎉</div>
+                    <div class="clinch-details">
+                        <strong>${leader.name}</strong> has won the In-Season Cup with ${leader.totalCupDays} cup days!<br>
+                        ${secondPlace.name} cannot catch up with only ${daysLeft} day${daysLeft !== 1 ? 's' : ''} remaining.
+                    </div>
+                `;
+            } else {
+                clinchDiv.classList.remove('clinched');
+                clinchContent.innerHTML = `
+                    <div class="clinch-number">${magicNumber}</div>
+                    <div class="clinch-details">
+                        <strong>${leader.name}</strong> leads by ${leadMargin} day${leadMargin !== 1 ? 's' : ''} over ${secondPlace.name}<br>
+                        Magic number to clinch: ${magicNumber} (combination of lead gains or days elapsed)
+                    </div>
+                `;
+            }
+            
+            clinchDiv.style.display = 'block';
         }
 
         async function updateCup() {
