@@ -288,12 +288,17 @@ fn find_player_by_team(team_abbrev: &str) -> Result<Option<String>, Error> {
 }
 
 fn find_next_game_for_cup_holder() -> Result<Option<NextGame>, Error> {
+    // Season ended April 16, 2026 — no more games to show
+    let pst = get_pst();
+    let today = Utc::now().with_timezone(&pst).date_naive();
+    let end_of_season = chrono::NaiveDate::from_ymd_opt(2026, 4, 16).unwrap();
+    if today > end_of_season {
+        return Ok(None);
+    }
+
     // Get current cup state to find who has the cup
     let cup_state = get_cup_state()?;
     let cup_holder = cup_state.current_owner;
-    
-    let pst = get_pst();
-    let today = Utc::now().with_timezone(&pst).date_naive();
     
     // Search up to 30 days ahead for the next game
     for days_ahead in 0..=30 {
@@ -484,6 +489,11 @@ fn update_in_season_cup() -> Result<Response, Error> {
     let today = Utc::now().with_timezone(&get_pst());
     let now = today - Duration::days(1); // Process up to yesterday
 
+    // Cap processing at end of regular season (April 16, 2026)
+    let pst = get_pst();
+    let end_of_season = pst.with_ymd_and_hms(2026, 4, 16, 23, 59, 59).unwrap();
+    let now = if now > end_of_season { end_of_season } else { now };
+
     // Get the last update date as timestamp
     let last_update = current_state.get_last_update_date();
     let duration: Duration = now - last_update;
@@ -639,6 +649,52 @@ fn update_in_season_cup() -> Result<Response, Error> {
         .with_body_text_plain(&response_json))
 }
 
+fn rewind_to_end_of_season() -> Result<Response, Error> {
+    let cutoff = "2026-04-16";
+
+    // Rewind cup history: remove all cup_days after the cutoff
+    let mut cup_history = get_cup_history()?;
+    let mut last_owner = String::new();
+    let mut last_date = String::new();
+
+    for team in cup_history.teams.iter_mut() {
+        team.cup_days.retain(|d| d.as_str() <= cutoff);
+        // Track who held the cup on the last day
+        if let Some(d) = team.cup_days.last() {
+            if d.as_str() > last_date.as_str() {
+                last_date = d.clone();
+                last_owner = team.team.clone();
+            }
+        }
+    }
+    set_cup_history(&cup_history)?;
+
+    // Rewind audit log: remove entries after the cutoff
+    let mut audit_log = get_audit_log()?;
+    audit_log.entries.retain(|e| e.date.as_str() <= cutoff);
+    set_audit_log(&audit_log)?;
+
+    // Reset state to the cutoff date with the correct owner
+    let mut state = get_cup_state()?;
+    state.last_update_year = 2026;
+    state.last_update_month = 4;
+    state.last_update_day = 16;
+    if !last_owner.is_empty() {
+        state.current_owner = last_owner.clone();
+    }
+    set_cup_state(&state)?;
+
+    let response_json = format!(
+        r#"{{"status": "success", "message": "Rewound to {}", "current_owner": "{}"}}"#,
+        cutoff, state.current_owner
+    );
+
+    Ok(Response::from_status(StatusCode::OK)
+        .with_content_type(mime::APPLICATION_JSON)
+        .with_header("Access-Control-Allow-Origin", "*")
+        .with_body_text_plain(&response_json))
+}
+
 /// The entry point for your application.
 ///
 /// This function is triggered when your service receives a client request. It could be used to
@@ -697,6 +753,15 @@ fn main(req: Request) -> Result<Response, Error> {
         // If request is to the `/update` path...
         "/update" => match req.get_method() {
             &Method::POST => update_in_season_cup(),
+            _ => Ok(Response::from_status(StatusCode::METHOD_NOT_ALLOWED)
+                .with_header(header::ALLOW, "POST")
+                .with_header("Access-Control-Allow-Origin", "*")
+                .with_body_text_plain("Only POST method is allowed for this endpoint\n")),
+        },
+
+        // Rewind data to end of regular season (April 16, 2026)
+        "/rewind" => match req.get_method() {
+            &Method::POST => rewind_to_end_of_season(),
             _ => Ok(Response::from_status(StatusCode::METHOD_NOT_ALLOWED)
                 .with_header(header::ALLOW, "POST")
                 .with_header("Access-Control-Allow-Origin", "*")
