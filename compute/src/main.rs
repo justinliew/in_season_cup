@@ -75,6 +75,11 @@ fn get_pst() -> FixedOffset {
     FixedOffset::west_opt(8 * 3600).unwrap()
 }
 
+// 2026-27 NHL regular season ends Saturday, April 10, 2027
+const END_OF_SEASON_YEAR: i32 = 2027;
+const END_OF_SEASON_MONTH: u32 = 4;
+const END_OF_SEASON_DAY: u32 = 10;
+
 #[derive(Serialize, Deserialize, Debug)]
 struct CupState {
     last_update_year: u32,
@@ -86,10 +91,10 @@ struct CupState {
 impl CupState {
     fn default() -> Self {
         CupState {
-            last_update_year: 2025,
-            last_update_month: 10,
-            last_update_day: 6,
-            current_owner: "FLA".to_string(), // Default starting team
+            last_update_year: 2026,
+            last_update_month: 9,
+            last_update_day: 28,
+            current_owner: "CAR".to_string(), // Defending Stanley Cup champion starts with the cup
         }
     }
 
@@ -288,10 +293,15 @@ fn find_player_by_team(team_abbrev: &str) -> Result<Option<String>, Error> {
 }
 
 fn find_next_game_for_cup_holder() -> Result<Option<NextGame>, Error> {
-    // Season ended April 16, 2026 — no more games to show
+    // No more games to show once the regular season has ended
     let pst = get_pst();
     let today = Utc::now().with_timezone(&pst).date_naive();
-    let end_of_season = chrono::NaiveDate::from_ymd_opt(2026, 4, 16).unwrap();
+    let end_of_season = chrono::NaiveDate::from_ymd_opt(
+        END_OF_SEASON_YEAR,
+        END_OF_SEASON_MONTH,
+        END_OF_SEASON_DAY,
+    )
+    .unwrap();
     if today > end_of_season {
         return Ok(None);
     }
@@ -489,9 +499,18 @@ fn update_in_season_cup() -> Result<Response, Error> {
     let today = Utc::now().with_timezone(&get_pst());
     let now = today - Duration::days(1); // Process up to yesterday
 
-    // Cap processing at end of regular season (April 16, 2026)
+    // Cap processing at end of regular season
     let pst = get_pst();
-    let end_of_season = pst.with_ymd_and_hms(2026, 4, 16, 23, 59, 59).unwrap();
+    let end_of_season = pst
+        .with_ymd_and_hms(
+            END_OF_SEASON_YEAR,
+            END_OF_SEASON_MONTH,
+            END_OF_SEASON_DAY,
+            23,
+            59,
+            59,
+        )
+        .unwrap();
     let now = if now > end_of_season { end_of_season } else { now };
 
     // Get the last update date as timestamp
@@ -511,31 +530,10 @@ fn update_in_season_cup() -> Result<Response, Error> {
         let day_date_str = day_date.format("%Y-%m-%d").to_string();
         let starting_owner = current_owner.clone();
 
-        // Check if this day is during the Olympic break (Feb 6-24, 2026 inclusive)
-        let is_olympic_break = day_date.year() == 2026 
-            && day_date.month() == 2 
-            && day_date.day() >= 6 
-            && day_date.day() <= 24;
-
         println!(
-            "Processing day {}: {} (owner: {}){}",
-            day_offset, day_date_str, current_owner,
-            if is_olympic_break { " [OLYMPIC BREAK]" } else { "" }
+            "Processing day {}: {} (owner: {})",
+            day_offset, day_date_str, current_owner
         );
-
-        // During Olympic break, just record in audit log but don't process games or add cup days
-        if is_olympic_break {
-            let audit_entry = AuditLogEntry {
-                date: day_date_str.clone(),
-                starting_owner: starting_owner.clone(),
-                game_result: "Olympic break - cup frozen".to_string(),
-                ending_owner: current_owner.clone(),
-                details: Some("No games during Olympic break (Feb 6-24, 2026)".to_string()),
-            };
-            add_audit_entry(&mut audit_log, audit_entry);
-            days_processed += 1;
-            continue; // Skip to next day without adding cup days or checking games
-        }
 
         // Check if the current owner's team played and won their game that day
         // We'll add the day to the appropriate team's history after we determine the outcome
@@ -650,7 +648,11 @@ fn update_in_season_cup() -> Result<Response, Error> {
 }
 
 fn rewind_to_end_of_season() -> Result<Response, Error> {
-    let cutoff = "2026-04-16";
+    let cutoff = format!(
+        "{:04}-{:02}-{:02}",
+        END_OF_SEASON_YEAR, END_OF_SEASON_MONTH, END_OF_SEASON_DAY
+    );
+    let cutoff = cutoff.as_str();
 
     // Rewind cup history: remove all cup_days after the cutoff
     let mut cup_history = get_cup_history()?;
@@ -676,9 +678,9 @@ fn rewind_to_end_of_season() -> Result<Response, Error> {
 
     // Reset state to the cutoff date with the correct owner
     let mut state = get_cup_state()?;
-    state.last_update_year = 2026;
-    state.last_update_month = 4;
-    state.last_update_day = 16;
+    state.last_update_year = END_OF_SEASON_YEAR as u32;
+    state.last_update_month = END_OF_SEASON_MONTH;
+    state.last_update_day = END_OF_SEASON_DAY;
     if !last_owner.is_empty() {
         state.current_owner = last_owner.clone();
     }
@@ -759,7 +761,7 @@ fn main(req: Request) -> Result<Response, Error> {
                 .with_body_text_plain("Only POST method is allowed for this endpoint\n")),
         },
 
-        // Rewind data to end of regular season (April 16, 2026)
+        // Rewind data to end of regular season
         "/rewind" => match req.get_method() {
             &Method::POST => rewind_to_end_of_season(),
             _ => Ok(Response::from_status(StatusCode::METHOD_NOT_ALLOWED)

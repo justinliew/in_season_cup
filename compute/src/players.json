@@ -1,20 +1,20 @@
 {
     "players": [
         {
-            "name": "Aiden",
-            "teams": ["FLA", "TBL", "TOR", "LAK", "UTA", "CGY", "CBJ", "CHI"]
-        },
-        {
             "name": "Nico",
-            "teams": ["WPG","CAR","OTT","MIN","VAN","BOS","NYI","SEA"]
-        },
-        {
-            "name": "Peter",
-            "teams": ["VGK","COL","WSH","NYR","NSH","DET","PIT","SJS"]
+            "teams": ["CAR", "TBL", "VGK", "ANA", "BOS", "OTT", "NSH", "CGY"]
         },
         {
             "name": "Zayden",
-            "teams": ["EDM","DAL","NJD","MTL","STL","ANA","PHI","BUF"]
+            "teams": ["FLA", "MIN", "WSH", "TOR", "NJD", "NYI", "WPG", "VAN"]
+        },
+        {
+            "name": "Aiden",
+            "teams": ["COL", "MTL", "UTA", "EDM", "PHI", "DET", "CBJ", "CHI"]
+        },
+        {
+            "name": "Peter",
+            "teams": ["DAL", "BUF", "SJS", "PIT", "STL", "LAK", "SEA", "NYR"]
         }
     ]
 }

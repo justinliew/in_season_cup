@@ -401,7 +401,7 @@
 
         // Calculate days left in regular season
         function getDaysLeftInSeason() {
-            const endOfSeason = new Date('2026-04-16T23:59:59');
+            const endOfSeason = new Date('2027-04-10T23:59:59');
             const now = new Date();
             const timeDiff = endOfSeason - now;
             return Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
@@ -603,14 +603,6 @@
                 const nextGame = await fetchNextGame();
 
                 if (nextGame) {
-                    // Check if we're currently in the Olympic break (Feb 6-24, 2026)
-                    const today = new Date();
-                    const todayPST = new Date(today.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
-                    const isOlympicBreak = todayPST.getFullYear() === 2026 
-                        && todayPST.getMonth() === 1 // February (0-indexed)
-                        && todayPST.getDate() >= 6 
-                        && todayPST.getDate() <= 24;
-
                     // Format the date in PST to match backend calculations
                     const dateParts = nextGame.date.split('-');
                     const gameDate = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]));
@@ -650,16 +642,7 @@
                         ? `${cupHolderDisplay} vs ${opponentDisplay}`
                         : `${opponentDisplay} @ ${cupHolderDisplay}`;
 
-                    // Add Olympic break notice if applicable
-                    const olympicBreakNotice = isOlympicBreak ? `
-                        <div style="background: rgba(255, 193, 7, 0.2); padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #ffc107;">
-                            <div style="font-size: 1.2rem; font-weight: bold; margin-bottom: 5px;">🏅 Olympic Break</div>
-                            <div style="opacity: 0.9;">Cup days are not accumulating during the Olympic break (Feb 6-24, 2026). The cup is frozen with the current holder.</div>
-                        </div>
-                    ` : '';
-
                     nextGameContentDiv.innerHTML = `
-                        ${olympicBreakNotice}
                         <div class="vs-matchup">${matchup}</div>
                         <div class="game-details">
                             <div class="game-detail">
