@@ -8,51 +8,19 @@
     <style>
         * {
             margin: 0;
-                 .last-updated {
-            text-align: center;
-            color: rgba(255,255,255,0.8);
-            font-size: 0.9rem;
-            margin-top: 20px;
-        }
-
-        .nav-links {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .nav-links a {
-            display: inline-block;
-            padding: 12px 24px;
-            margin: 0 10px;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            text-decoration: none;
-            border-radius: 25px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .nav-links a:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        .nav-links a.active {
-            background: white;
-            color: #667eea;
-        }
-
-        @media (max-width: 768px) {ng: 0;
+            padding: 0;
             box-sizing: border-box;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background:
+                radial-gradient(circle at 15% 0%, rgba(56, 189, 248, 0.14), transparent 45%),
+                radial-gradient(circle at 85% 100%, rgba(251, 191, 36, 0.08), transparent 40%),
+                linear-gradient(160deg, #050810 0%, #0b1526 45%, #10233a 100%);
+            background-attachment: fixed;
             min-height: 100vh;
-            color: #333;
+            color: #e8f1fb;
         }
 
         .container {
@@ -64,99 +32,162 @@
         .header {
             text-align: center;
             margin-bottom: 40px;
-            color: white;
+            color: #f4f9ff;
         }
 
         .header h1 {
             font-size: 3rem;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
         }
 
         .header p {
-            font-size: 1.2rem;
-            opacity: 0.9;
+            font-size: 1.1rem;
+            color: #94a8c2;
+        }
+
+        .season-badge {
+            display: inline-block;
+            margin-top: 14px;
+            padding: 6px 18px;
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            border-radius: 999px;
+            background: rgba(56, 189, 248, 0.08);
+            color: #7dd3fc;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
 
         .countdown {
             margin-top: 15px;
-            padding: 10px 20px;
-            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 22px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 25px;
             display: inline-block;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             font-weight: 600;
             backdrop-filter: blur(10px);
         }
 
+        .nav-links {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .nav-links a {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 0 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #cfe4fa;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.25s ease;
+        }
+
+        .nav-links a:hover {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: rgba(56, 189, 248, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .nav-links a.active {
+            background: linear-gradient(135deg, #22d3ee, #38bdf8);
+            color: #06202f;
+            border-color: transparent;
+            box-shadow: 0 6px 18px rgba(56, 189, 248, 0.35);
+        }
+
         .clinch-status {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            border-radius: 15px;
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 16px;
             padding: 20px 30px;
             text-align: center;
             margin-bottom: 30px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            color: white;
+            backdrop-filter: blur(12px);
+            color: #e8f1fb;
         }
 
         .clinch-status.clinched {
-            background: linear-gradient(135deg, #f5af19 0%, #f12711 100%);
+            background: rgba(251, 191, 36, 0.1);
+            border-color: rgba(251, 191, 36, 0.45);
+            box-shadow: 0 0 30px rgba(251, 191, 36, 0.2);
         }
 
         .clinch-status h3 {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             margin-bottom: 10px;
-            opacity: 0.9;
+            color: #7dd3fc;
+        }
+
+        .clinch-status.clinched h3 {
+            color: #fbbf24;
         }
 
         .clinch-number {
             font-size: 2.5rem;
             font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            color: #7dd3fc;
+        }
+
+        .clinch-status.clinched .clinch-number {
+            color: #fbbf24;
+            text-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
         }
 
         .clinch-details {
             font-size: 0.95rem;
             margin-top: 10px;
-            opacity: 0.9;
+            color: #b8c9dc;
         }
 
         .current-holder {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #4facfe 100%);
-            border-radius: 15px;
+            border-radius: 16px;
             padding: 30px;
             text-align: center;
             margin-bottom: 40px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
             color: white;
+            border: 1px solid rgba(255, 255, 255, 0.12);
         }
 
         .current-holder h2 {
-            font-size: 2rem;
+            font-size: 1.6rem;
             margin-bottom: 15px;
+            opacity: 0.85;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         .current-holder .team {
-            font-size: 3rem;
+            font-size: 2.8rem;
             font-weight: bold;
             margin: 10px 0;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
         }
 
         .next-game {
-            background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
-            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
             padding: 25px;
             text-align: center;
             margin-bottom: 40px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            color: white;
+            backdrop-filter: blur(12px);
+            color: #e8f1fb;
         }
 
         .next-game h3 {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             margin-bottom: 15px;
-            opacity: 0.9;
+            color: #7dd3fc;
         }
 
         .game-details {
@@ -167,50 +198,52 @@
         }
 
         .game-detail {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             padding: 15px;
             border-radius: 10px;
-            backdrop-filter: blur(10px);
         }
 
         .game-detail-label {
-            font-size: 0.9rem;
-            opacity: 0.8;
+            font-size: 0.85rem;
+            color: #8ba2ba;
             margin-bottom: 5px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
         .game-detail-value {
-            font-size: 1.3rem;
+            font-size: 1.25rem;
             font-weight: bold;
+            color: #f4f9ff;
         }
 
         .vs-matchup {
-            font-size: 1.8rem;
+            font-size: 1.7rem;
             font-weight: bold;
             margin: 15px 0;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            color: #f4f9ff;
         }
 
         .no-game {
             font-style: italic;
-            opacity: 0.8;
-            font-size: 1.1rem;
+            color: #8ba2ba;
+            font-size: 1.05rem;
         }
 
         .leaderboard {
-            background: white;
-            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
             padding: 30px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
+            backdrop-filter: blur(12px);
         }
 
         .leaderboard h3 {
-            font-size: 1.8rem;
+            font-size: 1.7rem;
             margin-bottom: 25px;
-            color: #333;
+            color: #f4f9ff;
             text-align: center;
         }
 
@@ -219,21 +252,34 @@
             align-items: center;
             padding: 20px;
             margin-bottom: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            border-left: 5px solid #667eea;
-            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border-left: 4px solid #38bdf8;
+            transition: all 0.25s ease;
         }
 
         .player-row:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+        }
+
+        .player-row:nth-child(1) {
+            border-left-color: #fbbf24;
+        }
+
+        .player-row:nth-child(2) {
+            border-left-color: #cbd5e1;
+        }
+
+        .player-row:nth-child(3) {
+            border-left-color: #d97757;
         }
 
         .player-rank {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: bold;
-            color: #667eea;
+            color: #7dd3fc;
             margin-right: 20px;
             min-width: 40px;
         }
@@ -243,10 +289,10 @@
         }
 
         .player-name {
-            font-size: 1.3rem;
+            font-size: 1.25rem;
             font-weight: bold;
             margin-bottom: 5px;
-            color: #333;
+            color: #f4f9ff;
         }
 
         .player-teams {
@@ -257,17 +303,17 @@
         }
 
         .team-tag {
-            background: #667eea;
+            background: #38bdf8;
             color: white;
             padding: 4px 10px;
             border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 500;
+            font-size: 0.85rem;
+            font-weight: 600;
         }
 
         .team-tag.has-cup {
-            background: #f5576c;
             animation: pulse 2s infinite;
+            box-shadow: 0 0 12px rgba(251, 191, 36, 0.6);
         }
 
         @keyframes pulse {
@@ -276,7 +322,7 @@
             }
 
             50% {
-                transform: scale(1.05);
+                transform: scale(1.06);
             }
 
             100% {
@@ -291,26 +337,25 @@
         .cup-days {
             font-size: 2rem;
             font-weight: bold;
-            color: #f5576c;
+            color: #fbbf24;
         }
 
         .cup-days-label {
-            font-size: 0.9rem;
-            color: #666;
+            font-size: 0.85rem;
+            color: #8ba2ba;
         }
-
-
 
         .loading {
             text-align: center;
             padding: 40px;
-            color: white;
+            color: #cfe4fa;
             font-size: 1.2rem;
         }
 
         .error {
-            background: #f56565;
-            color: white;
+            background: rgba(248, 113, 113, 0.15);
+            border: 1px solid rgba(248, 113, 113, 0.4);
+            color: #fecaca;
             padding: 20px;
             border-radius: 10px;
             text-align: center;
@@ -319,8 +364,8 @@
 
         .last-updated {
             text-align: center;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.9rem;
+            color: #7f9bc0;
+            font-size: 0.85rem;
             margin-top: 20px;
         }
 
@@ -356,6 +401,7 @@
         <header class="header">
             <h1>🏆 In-Season Cup Tracker</h1>
             <p>Track which teams are dominating the in-season cup competition</p>
+            <div class="season-badge">2026–27 Season</div>
             <div id="countdown" class="countdown"></div>
         </header>
 
@@ -410,7 +456,7 @@
         // Calculate and display days until end of regular season
         function updateCountdown() {
             const daysLeft = getDaysLeftInSeason();
-            
+
             const countdownDiv = document.getElementById('countdown');
             if (daysLeft > 0) {
                 countdownDiv.textContent = `📅 ${daysLeft} day${daysLeft !== 1 ? 's' : ''} left in regular season`;
@@ -552,26 +598,26 @@
             if (currentOwner) {
                 const player = findPlayerByTeam(currentOwner);
                 const teamInfo = teamColors[currentOwner];
-                
+
                 if (teamInfo) {
                     // Update team name to full name
                     currentTeamDiv.textContent = teamInfo.name;
-                    
+
                     // Create dynamic background with team colors
                     const colors = teamInfo.colors;
                     const gradient = `linear-gradient(135deg, ${colors.primary} 0%, ${colors.secondary} 50%, ${colors.accent} 100%)`;
                     currentHolderDiv.style.background = gradient;
-                    
+
                     // Adjust text color based on background brightness
                     const textColor = getContrastColor(colors.primary);
                     currentHolderDiv.style.color = textColor;
                 } else {
                     // Fallback for unknown teams
                     currentTeamDiv.textContent = currentOwner;
-                    currentHolderDiv.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #4facfe 100%)';
+                    currentHolderDiv.style.background = 'linear-gradient(135deg, #0ea5e9 0%, #38bdf8 50%, #7dd3fc 100%)';
                     currentHolderDiv.style.color = 'white';
                 }
-                
+
                 currentPlayerDiv.textContent = player ? `${player.name}'s team` : 'Unknown player';
                 currentHolderDiv.style.display = 'block';
             } else {
@@ -582,15 +628,15 @@
         function getContrastColor(hexColor) {
             // Remove # if present
             const hex = hexColor.replace('#', '');
-            
+
             // Convert to RGB
             const r = parseInt(hex.substr(0, 2), 16);
             const g = parseInt(hex.substr(2, 2), 16);
             const b = parseInt(hex.substr(4, 2), 16);
-            
+
             // Calculate relative luminance
             const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-            
+
             // Return white for dark backgrounds, dark for light backgrounds
             return luminance > 0.5 ? '#000000' : '#ffffff';
         }
@@ -723,12 +769,12 @@
                         <div class="player-teams">
                             ${player.teams.map(team => {
                                 const teamInfo = teamColors[team];
-                                const backgroundColor = teamInfo ? teamInfo.colors.primary : '#667eea';
+                                const backgroundColor = teamInfo ? teamInfo.colors.primary : '#38bdf8';
                                 const textColor = teamInfo ? getContrastColor(teamInfo.colors.primary) : '#ffffff';
                                 const hasCurrentCup = team === currentOwner;
-                                
+
                                 return `
-                                    <span class="team-tag ${hasCurrentCup ? 'has-cup' : ''}" 
+                                    <span class="team-tag ${hasCurrentCup ? 'has-cup' : ''}"
                                           style="background-color: ${backgroundColor}; color: ${textColor};">
                                         ${team}
                                     </span>
@@ -763,11 +809,11 @@
             const leader = playerStats[0];
             const secondPlace = playerStats[1];
             const leadMargin = leader.totalCupDays - secondPlace.totalCupDays;
-            
+
             // Magic number: days left - lead margin + 1
             // When magic number reaches 0 or below, leader has clinched
             const magicNumber = daysLeft - leadMargin + 1;
-            
+
             if (magicNumber <= 0) {
                 // Leader has clinched!
                 clinchDiv.classList.add('clinched');
@@ -788,7 +834,7 @@
                     </div>
                 `;
             }
-            
+
             clinchDiv.style.display = 'block';
         }
 

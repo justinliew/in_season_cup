@@ -13,9 +13,13 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background:
+                radial-gradient(circle at 15% 0%, rgba(56, 189, 248, 0.14), transparent 45%),
+                radial-gradient(circle at 85% 100%, rgba(251, 191, 36, 0.08), transparent 40%),
+                linear-gradient(160deg, #050810 0%, #0b1526 45%, #10233a 100%);
+            background-attachment: fixed;
             min-height: 100vh;
-            color: #333;
+            color: #e8f1fb;
             padding-bottom: 40px;
         }
 
@@ -28,47 +32,64 @@
         .header {
             text-align: center;
             margin-bottom: 40px;
-            color: white;
+            color: #f4f9ff;
         }
 
         .header h1 {
             font-size: 3rem;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
         }
 
         .header p {
-            font-size: 1.2rem;
-            opacity: 0.9;
+            font-size: 1.1rem;
+            color: #94a8c2;
+        }
+
+        .season-badge {
+            display: inline-block;
+            margin-top: 14px;
+            padding: 6px 18px;
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            border-radius: 999px;
+            background: rgba(56, 189, 248, 0.08);
+            color: #7dd3fc;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
 
         .nav-links {
             text-align: center;
-            margin-bottom: 30px;
+            margin: 20px 0 30px;
         }
 
         .nav-links a {
             display: inline-block;
             padding: 12px 24px;
-            margin: 0 10px;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
+            margin: 0 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #cfe4fa;
             text-decoration: none;
             border-radius: 25px;
             font-weight: 600;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
+            transition: all 0.25s ease;
         }
 
         .nav-links a:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(56, 189, 248, 0.15);
+            border-color: rgba(56, 189, 248, 0.4);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
         .nav-links a.active {
-            background: white;
-            color: #667eea;
+            background: linear-gradient(135deg, #22d3ee, #38bdf8);
+            color: #06202f;
+            border-color: transparent;
+            box-shadow: 0 6px 18px rgba(56, 189, 248, 0.35);
         }
 
         .stats-grid {
@@ -79,57 +100,59 @@
         }
 
         .stat-card {
-            background: white;
-            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
             padding: 25px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
+            backdrop-filter: blur(12px);
+            transition: all 0.25s ease;
         }
 
         .stat-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            background: rgba(255, 255, 255, 0.06);
         }
 
         .stat-card h3 {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             margin-bottom: 15px;
-            color: #667eea;
+            color: #7dd3fc;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
         .stat-card .icon {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
         }
 
         .stat-value {
-            font-size: 2.5rem;
+            font-size: 2.4rem;
             font-weight: bold;
-            color: #333;
+            color: #f4f9ff;
             margin: 10px 0;
         }
 
         .stat-label {
-            font-size: 0.9rem;
-            color: #666;
+            font-size: 0.85rem;
+            color: #8ba2ba;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
         .chart-section {
-            background: white;
-            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
             padding: 30px;
             margin-bottom: 30px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            backdrop-filter: blur(12px);
         }
 
         .chart-section h2 {
-            font-size: 1.8rem;
+            font-size: 1.7rem;
             margin-bottom: 20px;
-            color: #667eea;
+            color: #7dd3fc;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -144,13 +167,14 @@
         .loading {
             text-align: center;
             padding: 40px;
-            color: white;
+            color: #cfe4fa;
             font-size: 1.2rem;
         }
 
         .error {
-            background: #f56565;
-            color: white;
+            background: rgba(248, 113, 113, 0.15);
+            border: 1px solid rgba(248, 113, 113, 0.4);
+            color: #fecaca;
             padding: 20px;
             border-radius: 10px;
             text-align: center;
@@ -159,20 +183,21 @@
 
         .last-updated {
             text-align: center;
-            color: rgba(255,255,255,0.8);
-            font-size: 0.9rem;
+            color: #7f9bc0;
+            font-size: 0.85rem;
             margin-top: 30px;
         }
 
         /* Placeholder for charts */
         .chart-placeholder {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px dashed rgba(255, 255, 255, 0.15);
             border-radius: 10px;
             height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #666;
+            color: #8ba2ba;
             font-style: italic;
         }
 
@@ -193,7 +218,7 @@
         .bar-label {
             min-width: 120px;
             font-weight: 600;
-            color: #333;
+            color: #e8f1fb;
             text-align: right;
         }
 
@@ -201,7 +226,7 @@
             flex: 0 0 auto;
             max-width: 70%;
             height: 50px;
-            background: #f0f0f0;
+            background: rgba(255, 255, 255, 0.06);
             border-radius: 8px;
             overflow: hidden;
             display: flex;
@@ -216,7 +241,7 @@
             color: white;
             font-weight: 600;
             font-size: 0.9rem;
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
             position: relative;
             gap: 4px;
             padding: 0 8px;
@@ -225,7 +250,7 @@
         }
 
         .bar-segment:hover {
-            opacity: 0.8;
+            opacity: 0.85;
             cursor: pointer;
         }
 
@@ -235,7 +260,8 @@
             bottom: 100%;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(6, 12, 22, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             color: white;
             padding: 8px 12px;
             border-radius: 6px;
@@ -252,7 +278,7 @@
         .bar-total {
             min-width: 60px;
             font-weight: bold;
-            color: #667eea;
+            color: #7dd3fc;
             font-size: 1.1rem;
         }
 
@@ -262,7 +288,7 @@
             gap: 15px;
             margin-top: 20px;
             padding-top: 20px;
-            border-top: 2px solid #e0e0e0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .legend-item {
@@ -279,7 +305,7 @@
 
         .legend-label {
             font-size: 0.9rem;
-            color: #666;
+            color: #8ba2ba;
         }
 
         /* Line chart styles */
@@ -303,7 +329,7 @@
 
         .line-point {
             r: 4;
-            fill: white;
+            fill: #0b1526;
             stroke-width: 2;
             cursor: pointer;
         }
@@ -313,17 +339,17 @@
         }
 
         .axis-line {
-            stroke: #ccc;
+            stroke: rgba(255, 255, 255, 0.25);
             stroke-width: 1;
         }
 
         .axis-label {
             font-size: 11px;
-            fill: #666;
+            fill: #8ba2ba;
         }
 
         .grid-line {
-            stroke: #e0e0e0;
+            stroke: rgba(255, 255, 255, 0.08);
             stroke-width: 1;
             stroke-dasharray: 2,2;
         }
@@ -333,7 +359,7 @@
                 padding: 10px;
                 width: 100%;
             }
-            
+
             .header h1 {
                 font-size: 2rem;
             }
@@ -394,7 +420,7 @@
                 flex-direction: column;
                 gap: 8px;
                 padding: 12px;
-                background: #f9f9f9;
+                background: rgba(255, 255, 255, 0.04);
                 border-radius: 8px;
                 margin-bottom: 12px;
             }
@@ -406,12 +432,12 @@
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                color: #667eea;
+                color: #7dd3fc;
             }
 
             .bar-label-total {
                 font-size: 1.3rem;
-                color: #667eea;
+                color: #7dd3fc;
                 font-weight: 700;
             }
 
@@ -426,7 +452,7 @@
                 height: 35px;
                 margin-bottom: 0;
                 flex-shrink: 0;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             }
 
             .bar-segment {
@@ -493,6 +519,7 @@
         <header class="header">
             <h1>📊 In-Season Cup Statistics</h1>
             <p>Detailed analytics and insights into the cup competition</p>
+            <div class="season-badge">2026–27 Season</div>
         </header>
 
         <div class="nav-links">
@@ -565,7 +592,7 @@
         async function loadAllData() {
             showLoading();
             hideError();
-            
+
             try {
                 // Fetch all data in parallel
                 const [players, history, audit, state] = await Promise.all([
@@ -579,20 +606,20 @@
                 cupHistory = history;
                 auditLog = audit;
                 cupState = state;
-                
+
                 // Display the statistics
                 displayQuickStats();
-                
+
                 // Display charts
                 displayPlayerTeamChart();
                 displayTimelineChart();
-                
+
                 // TODO: Add your other chart rendering functions here
                 // displayChart3();
-                
+
                 hideLoading();
                 updateLastUpdated();
-                
+
             } catch (error) {
                 hideLoading();
                 showError('Failed to load statistics. Please check your connection and try again.');
@@ -601,32 +628,32 @@
 
         function displayQuickStats() {
             const quickStatsDiv = document.getElementById('quickStats');
-            
+
             // Calculate some quick stats
             const totalDays = cupHistory.teams.reduce((sum, team) => sum + team.cup_days.length, 0);
             const totalTransfers = auditLog.entries.filter(entry => entry.starting_owner !== entry.ending_owner).length;
             const currentHolder = cupState.current_owner;
             const teamsWithCup = cupHistory.teams.filter(team => team.cup_days.length > 0).length;
-            
+
             quickStatsDiv.innerHTML = `
                 <div class="stat-card">
                     <h3><span class="icon">📅</span>Total Cup Days</h3>
                     <div class="stat-value">${totalDays}</div>
                     <div class="stat-label">Days Tracked</div>
                 </div>
-                
+
                 <div class="stat-card">
                     <h3><span class="icon">🔄</span>Cup Transfers</h3>
                     <div class="stat-value">${totalTransfers}</div>
                     <div class="stat-label">Times Changed Hands</div>
                 </div>
-                
+
                 <div class="stat-card">
                     <h3><span class="icon">🏆</span>Current Holder</h3>
                     <div class="stat-value">${currentHolder}</div>
                     <div class="stat-label">Defending Team</div>
                 </div>
-                
+
                 <div class="stat-card">
                     <h3><span class="icon">👥</span>Teams with Cup</h3>
                     <div class="stat-value">${teamsWithCup}</div>
@@ -638,24 +665,24 @@
         function displayPlayerTeamChart() {
             const chartContainer = document.getElementById('playerTeamChart');
             const isMobile = window.innerWidth <= 768;
-            
+
             // Calculate stats for each player
             const playerStats = playersData.map(player => {
                 const teamBreakdown = [];
                 let totalDays = 0;
-                
+
                 player.teams.forEach(team => {
                     const teamHistory = cupHistory.teams.find(t => t.team === team);
                     if (teamHistory && teamHistory.cup_days.length > 0) {
                         teamBreakdown.push({
                             team: team,
                             days: teamHistory.cup_days.length,
-                            color: teamColors[team] || '#667eea'
+                            color: teamColors[team] || '#38bdf8'
                         });
                         totalDays += teamHistory.cup_days.length;
                     }
                 });
-                
+
                 return {
                     name: player.name,
                     teams: teamBreakdown,
@@ -663,21 +690,21 @@
                 };
             }).filter(p => p.total > 0) // Only include players with cup days
               .sort((a, b) => b.total - a.total); // Sort by total days descending
-            
+
             if (playerStats.length === 0) {
                 chartContainer.innerHTML = '<div class="chart-placeholder">No cup data available yet</div>';
                 return;
             }
-            
+
             // Find the maximum total for scaling
             const maxTotal = Math.max(...playerStats.map(p => p.total));
-            
+
             // Build the bar chart HTML
             let chartHTML = '<div class="bar-chart">';
-            
+
             playerStats.forEach(player => {
                 const barWidthPercent = (player.total / maxTotal) * 100;
-                
+
                 if (isMobile) {
                     // Mobile layout: card-style with label and total on top, proportional bar below
                     chartHTML += `
@@ -689,19 +716,19 @@
                             <div class="bar-wrapper">
                                 <div class="bar-container" style="width: ${barWidthPercent}%; min-width: 60px; max-width: 100%;">
                     `;
-                    
+
                     player.teams.forEach(teamData => {
                         const segmentPercent = (teamData.days / player.total) * 100;
                         const showLabel = segmentPercent > 15; // Only show team name if segment is wide enough
                         chartHTML += `
-                            <div class="bar-segment" 
+                            <div class="bar-segment"
                                  style="width: ${segmentPercent}%; background-color: ${teamData.color};">
                                 ${showLabel ? `<span>${teamData.team}</span>` : ''}
                                 <span>${teamData.days}</span>
                             </div>
                         `;
                     });
-                    
+
                     chartHTML += `
                                 </div>
                             </div>
@@ -715,12 +742,12 @@
                             <div style="flex: 0 0 70%; display: flex; align-items: center; gap: 15px;">
                                 <div class="bar-container" style="width: ${barWidthPercent}%; max-width: 100%; flex: none; min-width: 50px;">
                     `;
-                    
+
                     player.teams.forEach(teamData => {
                         const segmentPercent = (teamData.days / player.total) * 100;
                         const showLabel = segmentPercent > 12; // Only show team name if segment is wide enough
                         chartHTML += `
-                            <div class="bar-segment" 
+                            <div class="bar-segment"
                                  style="width: ${segmentPercent}%; background-color: ${teamData.color};">
                                 ${showLabel ? `<span>${teamData.team}</span>` : ''}
                                 <span>${teamData.days > 0 ? teamData.days : ''}</span>
@@ -728,7 +755,7 @@
                             </div>
                         `;
                     });
-                    
+
                     chartHTML += `
                                 </div>
                                 <div class="bar-total">${player.total}</div>
@@ -737,49 +764,49 @@
                     `;
                 }
             });
-            
+
             chartHTML += '</div>';
-            
+
             // Add legend showing all teams
             const allTeams = new Set();
             playerStats.forEach(player => {
                 player.teams.forEach(t => allTeams.add(t.team));
             });
-            
+
             chartHTML += '<div class="chart-legend">';
             Array.from(allTeams).sort().forEach(team => {
                 chartHTML += `
                     <div class="legend-item">
-                        <div class="legend-color" style="background-color: ${teamColors[team] || '#667eea'}"></div>
+                        <div class="legend-color" style="background-color: ${teamColors[team] || '#38bdf8'}"></div>
                         <div class="legend-label">${team}</div>
                     </div>
                 `;
             });
             chartHTML += '</div>';
-            
+
             chartContainer.innerHTML = chartHTML;
         }
 
         function displayTimelineChart() {
             const chartContainer = document.getElementById('timelineChart');
-            
+
             // Get all unique dates from cup history, sorted
             const allDates = new Set();
             cupHistory.teams.forEach(team => {
                 team.cup_days.forEach(day => allDates.add(day));
             });
             const sortedDates = Array.from(allDates).sort();
-            
+
             if (sortedDates.length === 0) {
                 chartContainer.innerHTML = '<div class="chart-placeholder">No timeline data available yet</div>';
                 return;
             }
-            
+
             // Calculate cumulative totals for each player over time
             const playerTimelines = playersData.map(player => {
                 const timeline = [];
                 let cumulative = 0;
-                
+
                 sortedDates.forEach(date => {
                     // Check if any of the player's teams had the cup on this date
                     player.teams.forEach(team => {
@@ -790,28 +817,28 @@
                     });
                     timeline.push({ date, total: cumulative });
                 });
-                
+
                 return {
                     name: player.name,
                     timeline: timeline,
                     color: getPlayerColor(player.name)
                 };
             });
-            
+
             // SVG dimensions
             const width = chartContainer.clientWidth || 800;
             const height = 350;
             const margin = { top: 20, right: 20, bottom: 40, left: 50 };
             const chartWidth = width - margin.left - margin.right;
             const chartHeight = height - margin.top - margin.bottom;
-            
+
             // Find max value for y-axis
             const maxValue = Math.max(...playerTimelines.flatMap(p => p.timeline.map(t => t.total)));
-            
+
             // Create SVG
             let svg = `<svg class="line-chart-svg" viewBox="0 0 ${width} ${height}">
                 <g transform="translate(${margin.left},${margin.top})">`;
-            
+
             // Draw grid lines
             for (let i = 0; i <= 5; i++) {
                 const y = (chartHeight / 5) * i;
@@ -819,11 +846,11 @@
                 svg += `<line class="grid-line" x1="0" y1="${y}" x2="${chartWidth}" y2="${y}"/>`;
                 svg += `<text class="axis-label" x="-5" y="${y + 4}" text-anchor="end">${value}</text>`;
             }
-            
+
             // Draw axes
             svg += `<line class="axis-line" x1="0" y1="${chartHeight}" x2="${chartWidth}" y2="${chartHeight}"/>`;
             svg += `<line class="axis-line" x1="0" y1="0" x2="0" y2="${chartHeight}"/>`;
-            
+
             // Draw x-axis labels (every few dates to avoid crowding)
             const labelInterval = Math.max(1, Math.floor(sortedDates.length / 8));
             sortedDates.forEach((date, i) => {
@@ -834,11 +861,11 @@
                     svg += `<text class="axis-label" x="${x}" y="${chartHeight + 20}" text-anchor="middle">${label}</text>`;
                 }
             });
-            
+
             // Draw lines for each player
             playerTimelines.forEach(player => {
                 if (player.timeline.length === 0) return;
-                
+
                 // Create path data
                 let pathData = 'M ';
                 player.timeline.forEach((point, i) => {
@@ -846,9 +873,9 @@
                     const y = chartHeight - (point.total / maxValue) * chartHeight;
                     pathData += `${x},${y} `;
                 });
-                
+
                 svg += `<path class="line-path" d="${pathData}" stroke="${player.color}" />`;
-                
+
                 // Add points
                 player.timeline.forEach((point, i) => {
                     const x = (i / (sortedDates.length - 1)) * chartWidth;
@@ -858,9 +885,9 @@
                     </circle>`;
                 });
             });
-            
+
             svg += `</g></svg>`;
-            
+
             // Add legend
             let legendHTML = '<div class="chart-legend">';
             playerTimelines.forEach(player => {
@@ -873,16 +900,16 @@
                 `;
             });
             legendHTML += '</div>';
-            
+
             chartContainer.innerHTML = `<div class="line-chart">${svg}</div>${legendHTML}`;
         }
 
         function getPlayerColor(playerName) {
             const colors = {
-                'Aiden': '#f5576c',
-                'Nico': '#667eea',
-                'Peter': '#4facfe',
-                'Zayden': '#fa8231'
+                'Aiden': '#f97316',
+                'Nico': '#38bdf8',
+                'Peter': '#a78bfa',
+                'Zayden': '#4ade80'
             };
             return colors[playerName] || '#999';
         }
@@ -917,7 +944,7 @@
 
         // Initialize page when it loads
         window.addEventListener('load', loadAllData);
-        
+
         // Redraw charts on window resize (for orientation changes)
         let resizeTimer;
         window.addEventListener('resize', () => {
@@ -929,7 +956,7 @@
                 }
             }, 250);
         });
-        
+
         // Auto-refresh every 30 minutes
         setInterval(loadAllData, 30 * 60 * 1000);
     </script>
